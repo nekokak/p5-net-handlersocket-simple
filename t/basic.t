@@ -26,6 +26,72 @@ note Dumper $rows;
 
 my $hs = Net::HandlerSocket::Simple->new(+{host => '127.0.0.1', port => 9998});
 
+my $dat = $hs->select('test.handler_socket_test',
+    +{
+        fields  => [qw/id name/],
+        where   => +[
+            [qw/1 2 3/]
+        ],
+    },
+);
+
+ok $dat;
+
+note Dumper $dat;
+
+$dat = $hs->select('test.handler_socket_test',
+    +{
+        fields  => [qw/id name/],
+        where   => +[
+            [qw/1 2 3/]
+        ],
+    },
+    {
+        limit => 4,
+    }
+);
+
+ok $dat;
+
+note Dumper $dat;
+
+$dat = $hs->select('test.handler_socket_test',
+    +{
+        fields  => [qw/id name/],
+        where   => +[
+            [qw/1 2 3/]
+        ],
+    },
+    {
+        limit => 4,
+        slice => 'hash',
+    }
+);
+
+ok $dat;
+
+note Dumper $dat;
+
+$dat = $hs->select('test.handler_socket_test',
+    +{
+        fields  => [qw/id name/],
+        where   => +[
+            [qw/1 2 3/]
+        ],
+    },
+    {
+        limit => 4,
+        slice => 'array',
+    }
+);
+
+ok $dat;
+
+note Dumper $dat;
+
+done_testing;
+
+__END__
 my $dat = $hs->select(
     db      => 'test',
     table   => 'handler_socket_test',
@@ -101,4 +167,46 @@ $dat = $hs->select(
 note Dumper $dat;
 
 done_testing;
+
+
+
+__END__
+
+$dat = $hs->select(
+    db      => 'test',
+    table   => 'handler_socket_test',
+    'index' => 'PRIMARY',
+    op      => '=',
+    fields  => [qw/id name/],
+    where   => +[
+        [qw/1 2 3/]
+    ],
+    filter => +{
+    },
+    limit  => 4,
+    offset => 0,
+    slice  => 'hash',
+);
+
+
+
+$dat = $hs->select('test.handler_socket_test',
+    +{
+        fields  => [qw/id name/],
+        where   => +[
+            [qw/1 2 3/]
+        ],
+    },
+    {
+        'index' => 'PRIMARY',
+        op      => '=',
+        limit  => 4,
+        offset => 0,
+        slice  => 'hash',
+        filter => +{
+        },
+    }
+);
+
+
 
