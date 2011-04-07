@@ -40,11 +40,8 @@ sub select {
     if ($in_cond) {
         push @exec_args, ($filters ? ($in_idx, $in_cond) : (undef,undef,undef, $in_idx, $in_cond));
     }
-    use Data::Dumper;
-    warn Dumper \@exec_args;
     
     my $dat = $self->{client}->execute_find(@exec_args);
-    warn Dumper $dat;
     # FIXME: check error
     shift @$dat;
 
