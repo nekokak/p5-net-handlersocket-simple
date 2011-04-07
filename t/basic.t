@@ -25,25 +25,80 @@ ok $rows;
 note Dumper $rows;
 
 my $hs = Net::HandlerSocket::Simple->new(+{host => '127.0.0.1', port => 9998});
-$hs->install_index('index_name', 'test', 'handler_socket_test', 'PRIMARY', [qw/id name/]);
 
-subtest 'find(flat)' => sub {
-    my $dat = $hs->find('index_name', [qw/1/], {op => '>=', limit => 4, offset => 0});
-    note Dumper $dat;
-    is_deeply $dat, [qw/1 nekokak 2 zigorou 3 xaicron 4 hidek/];
-};
+my $dat = $hs->select(
+    db      => 'test',
+    table   => 'handler_socket_test',
+    'index' => 'PRIMARY',
+    op      => '=',
+    fields  => [qw/id name/],
+    where   => +[
+        1,
+    ],
+    filter => +{
+    },
+    limit  => 4,
+    offset => 0,
+    slice  => 'flat',
+);
 
-subtest 'find(array)' => sub {
-    my $dat = $hs->find('index_name', [qw/1/], {op => '>=', limit => 4, offset => 0, slice => 'array'});
-    note Dumper $dat;
-    is_deeply $dat, [[qw/1 nekokak/],[qw/2 zigorou/],[qw/3 xaicron/],[qw/4 hidek/]];
-};
+ok $dat;
 
-subtest 'find(flat)' => sub {
-    my $dat = $hs->find('index_name', [qw/1/], {op => '>=', limit => 4, offset => 0, slice => 'hash'});
-    note Dumper $dat;
-    is_deeply $dat, [+{id => 1, name => 'nekokak'}, +{id => 2, name => 'zigorou'}, +{id => 3, name => 'xaicron'}, +{id => 4, name => 'hidek'}];
-};
+note Dumper $dat;
+
+$dat = $hs->select(
+    db      => 'test',
+    table   => 'handler_socket_test',
+    'index' => 'PRIMARY',
+    op      => '=',
+    fields  => [qw/id name/],
+    where   => +[
+        [qw/1 2 3/]
+    ],
+    filter => +{
+    },
+    limit  => 4,
+    offset => 0,
+    slice  => 'flat',
+);
+
+note Dumper $dat;
+
+$dat = $hs->select(
+    db      => 'test',
+    table   => 'handler_socket_test',
+    'index' => 'PRIMARY',
+    op      => '=',
+    fields  => [qw/id name/],
+    where   => +[
+        [qw/1 2 3/]
+    ],
+    filter => +{
+    },
+    limit  => 4,
+    offset => 0,
+    slice  => 'array',
+);
+
+note Dumper $dat;
+
+$dat = $hs->select(
+    db      => 'test',
+    table   => 'handler_socket_test',
+    'index' => 'PRIMARY',
+    op      => '=',
+    fields  => [qw/id name/],
+    where   => +[
+        [qw/1 2 3/]
+    ],
+    filter => +{
+    },
+    limit  => 4,
+    offset => 0,
+    slice  => 'hash',
+);
+
+note Dumper $dat;
 
 done_testing;
 
