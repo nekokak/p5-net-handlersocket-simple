@@ -123,7 +123,7 @@ sub select {
     my ($where, $in_idx, $in_cond) = $self->_make_cond($args->{where});
 
     my $op     = $opts->{op}     || '=';
-    my $limit  = $opts->{limit}  || 1;
+    my $limit  = $opts->{limit}  || (scalar(@{$in_cond||[]}) ? scalar(@{$in_cond||[]}) : 1);
     my $offset = $opts->{offset} || 0;
 
     my @exec_args = ($index, $op, $where, $limit, $offset);
@@ -190,11 +190,8 @@ sub _make_filter_cond {
         if (ref($_filter_setting) eq 'HASH') {
             ($_filter_op, $_filter_val) = each %$_filter_setting;
         }
-        elsif (ref($_filter_setting) eq 'SCALAR') {
-            ($_filter_op, $_filter_val) = ('=', $_filter_setting);
-        }
         else {
-            Carp::croak 'not allowed filter data format';
+            ($_filter_op, $_filter_val) = ('=', $_filter_setting);
         }
         push @$filters, ['F', $_filter_op, $_filter_potition, $_filter_val];
         $_filter_potition++;
@@ -266,7 +263,97 @@ handler socket daemon host.
 
 handler socket daemon port.
 
+=item * $options->{wo_host}
+
+optional
+
+handler socket daemon host for write.
+
+=item * $options->{wo_port}
+
+optional
+
+handler socket daemon port for write.
+
 =back
+
+=head2 $hs->insert($db_table, \%row);
+
+=over4
+
+=item * $db_table
+
+database name and table name that concat '.'
+
+=item * %row
+
+row data here.
+
+=back
+
+=head2 $hs->bulk_insert($db_table, \@rows);
+
+=head2 $hs->update($db_table, \%cond);
+
+=over
+
+=item * $cond{where}
+
+update conditon here.
+
+=item * $cond{set}
+
+update data here.
+
+=back
+
+=head2 $hs->delete($db_table, \%cond);
+
+=over
+
+=item * $cond{where}
+
+update conditon here.
+
+=back
+
+=head2 $hs->select($db_table, \%args, \%opts);
+
+=over
+
+=item * $args{fields}
+
+fetch fields name here.
+
+=item * $args{where}
+
+where condition here.
+
+=item * $opts{index}
+
+index name here.
+
+=item * $opts{filter}
+
+filter conditon here.
+
+=item * $opts{slice}
+
+get data format.
+
+flat | hash | array
+
+=item * $opts{limit}
+
+get limit data size.
+
+=item * $opts{offset}
+
+get offset data size.
+
+=back
+
+
 
 =head1 AUTHOR
 
